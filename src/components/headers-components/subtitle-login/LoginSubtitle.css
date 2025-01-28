@@ -1,0 +1,20 @@
+.subtitle-guest {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Poppins';
+    
+}
+
+.subtitle-guest h2 {
+    color: black;
+    font-weight: lighter;
+    line-height: 1;
+}
+
+.subtitle-guest h1 {
+    color: black;
+    font-weight: bold;
+    line-height: 1;
+}

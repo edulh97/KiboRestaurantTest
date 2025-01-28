@@ -1,0 +1,30 @@
+.favorites-container {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .favorites-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .favorite-item {
+    margin: 1rem;
+    padding: 1rem;
+    border: 1px solid #000000;
+    border-radius: 8px;
+    width: 200px;
+    text-align: center;
+    background-color:#7E0809 ;
+  }
+  
+  .favorite-item h2 {
+    font-size: 1.2rem;
+  }
+  
+  .favorite-item a {
+    text-decoration: none;
+    color: #48ACAB;
+  }
+  

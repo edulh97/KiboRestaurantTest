@@ -1,0 +1,52 @@
+.home-container {
+    width: 100%;
+    height: 100vh;
+    box-sizing: border-box;
+    overflow-y: hidden;
+}
+
+.home-title {
+    height: 10%;
+    text-align: center;
+    color: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Jaro';
+}
+
+.home-image {
+    width: 100%;
+    height: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.home-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .home-container {
+        padding: 10px;
+    }
+
+    .home-title {
+        font-size: 1.8rem;
+    }
+
+    .home-image img {
+        object-fit: contain;
+    }
+}
+
+@media (min-width: 1025px) {
+    .home-image img {
+        width: 100vw;
+        height: 100%;
+        object-fit: contain;
+    }
+}

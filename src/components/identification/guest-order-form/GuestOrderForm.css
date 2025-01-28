@@ -1,0 +1,61 @@
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+}
+
+/* Formulario */
+.ant-form {
+    padding: 20px;
+    border-radius: 10px;
+    /* Bordes redondeados */
+    width: 100%;
+    /* El formulario ocupa el 100% del ancho disponible */
+    max-width: 600px;
+    /* El formulario no será más ancho que 600px */
+    margin: 0 auto;
+    /* Centra el formulario en el contenedor */
+}
+
+.form-item {
+    margin-bottom: 33px;
+    /* Espaciado entre los items */
+}
+
+.input-field {
+    font-family: 'Poppins';
+    border-radius: 10px;
+    padding: 15px 15px;
+    border: 1px solid #000000;
+}
+
+.button-guest {
+    font-family: 'Poppins';
+    background-color: #DA4B4E;
+    color: white;
+    padding: 30px;
+    width: 100%;
+    border-radius: 10px;
+    font-size: 20px;
+}
+
+.input-field::placeholder {
+    color: #888;
+}
+
+@media (max-width: 768px) {
+    .ant-form {
+        width: 100%;
+        padding: 15px;
+    }
+}
+
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;  /* Oculta los botones en Chrome/Safari */
+  margin: 0;  /* Elimina márgenes */
+}
+
+

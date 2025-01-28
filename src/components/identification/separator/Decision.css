@@ -1,0 +1,118 @@
+.buttons-container {    
+    width: 90vw;
+    max-width: 600px;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    margin: 10px auto;
+    gap: 1px;
+}
+
+.button1 {
+    padding: 12px 24px;
+    font-size: 30px;
+    font-family: 'Jaro', sans-serif;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    background-color: #DA4B4E;
+    color: white;
+    transition: background-color 0.3s ease, transform 0.2s;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: -5px 5px 20px rgba(0, 0, 0, 0.6);
+}
+
+.button1:hover {
+    background-color: #B12F2F;
+    transform: scale(1.05);
+}
+
+.button2 {
+    padding: 12px 24px;
+    font-size: 30px;
+    font-family: 'Jaro', sans-serif;
+    cursor: pointer;
+    border: none;
+    border-radius: 10px;
+    background-color: #48ACAB;
+    color: white;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: -5px 5px 20px rgba(0, 0, 0, 0.6);
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.button2:hover {
+    background-color: #39908F;
+    transform: scale(1.05);
+}
+
+/* Contenedor de la línea */
+.separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    max-width: 600px;
+    margin: 20px 0;
+}
+
+/* Línea separadora */
+.separator::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    border-top: 1px solid #000;
+}
+
+/* Texto "or" centrado sobre la línea */
+.or {
+    background-color: #912D2E;
+    padding: 0 10px;
+    position: relative;
+    z-index: 1;
+    color: white;
+    font-size: 30px;
+    font-family: 'Jaro', sans-serif;
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .buttons-container {
+        width: 80vw;
+    }
+
+    .button1, .button2 {
+        font-size: 30px;
+        padding: 14px 28px;
+        max-width: 550px;
+    }
+
+    .or {
+        font-size: 30px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .buttons-container {
+        width: 70vw;
+        max-width: 700px;
+
+    }
+
+    .button1, .button2 {
+        font-size: 35px;
+        padding: 16px 32px;
+        max-width: 600px;
+    }
+
+    .or {
+        font-size: 35px;
+    }
+}

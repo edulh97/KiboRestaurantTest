@@ -1,0 +1,13 @@
+.header {    
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 10vh;
+}
+
+.header h1 {
+    font-size: 4rem;
+    letter-spacing: 4px;
+}
