@@ -4,8 +4,8 @@ function Subtitle() {
     return (
         <>
             <div className="subtitle-guest">
-                <h1>Order as a guest</h1>
-                <h2>Get discounts when you register</h2>
+                <h2>Order as a guest</h2>
+                <h2>Or register and get discounts</h2>
             </div>
         </>
     )

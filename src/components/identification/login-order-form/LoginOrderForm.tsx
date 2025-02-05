@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Button, Form, Input } from 'antd';
 import './LoginOrderForm.css';
+import { useNavigate } from 'react-router-dom';
 
 type LayoutType = Parameters<typeof Form>[0]['layout'];
 
 const LoginOrderForm: React.FC = () => {
   const [form] = Form.useForm();
   const [formLayout, setFormLayout] = useState<LayoutType>('vertical');
-
+  const navigate = useNavigate();
+  
   const onFormLayoutChange = ({ layout }: { layout: LayoutType }) => {
     setFormLayout(layout);
   };
@@ -65,7 +67,7 @@ const LoginOrderForm: React.FC = () => {
           </Button>
         </Form.Item>
         <h2>
-          Don’t have an account? <span className="signin-link"> &nbsp; Sign Up</span>
+          Don’t have an account? &nbsp; <a className="signin-link" onClick={() => navigate("/Guest-Screen")}>  Sign Up </a>
         </h2>
       </Form>
     </div>

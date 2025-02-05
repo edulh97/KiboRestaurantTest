@@ -81,7 +81,9 @@
     color: #48ACAB;
     cursor: pointer;
     text-decoration: underline;
+    font-size: 1.5rem;
 }
+
 
 .signin-link:hover {
     color: #DA4B4E;
