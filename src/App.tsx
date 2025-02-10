@@ -15,6 +15,7 @@ import { OrderProvider } from './context/OrderContext';
 import { FavoritesProvider } from './context/FavoritesContext';
 import FavoritesPage from './pages/favorites/FavoritesPage';
 import User from './pages/Users/Usuarios';
+import Report from './pages/reports/Reports';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
               <Route path='/Local-Summary' element={<LocalSummary />} />
               <Route path='/Favorites' element={<FavoritesPage />} />
               <Route path='/Usuarios' element={<User />} />
+              <Route path='/Reports' element={<Report />} />
               <Route path='/*' element={<Home />} />
             </Routes>
           </BrowserRouter>

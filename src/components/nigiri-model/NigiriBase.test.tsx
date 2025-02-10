@@ -97,7 +97,6 @@ describe("Control de cantidad y calidad", () => {
 });
 
 
-// Mock para `useNavigate`
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
     const originalModule = await vi.importActual("react-router-dom");

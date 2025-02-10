@@ -1,0 +1,56 @@
+[
+  {
+    "id": "F491DF9A73B54C64B3617BFA6BF11B2F",
+    "parent": "#",
+    "text": "Como empezar",
+    "a_attr": {
+      "href": "Comoempezar.html",
+      "data-related": "[{\"title\":\"Como empezar\",\"url\":\"Comoempezar.html\"},{\"title\":\"Crear cuenta o seguir como invitado\",\"url\":\"Crearcuentaoseguircomoinvitado.html\"},{\"title\":\"Iniciar sesion\",\"url\":\"Iniciarsesion.html\"},{\"title\":\"Navegación del menu\",\"url\":\"Navegaciondelmenu.html\"},{\"title\":\"Añadir platos a favoritos\",\"url\":\"Anadirplatosafavoritos.html\"},{\"title\":\"Realizar un pedido\",\"url\":\"Realizarunpedido.html\"}]"
+    }
+  },
+  {
+    "id": "C79E9E2782F04312BD0F2E72976C33A7",
+    "parent": "#",
+    "text": "Errores y solucion",
+    "a_attr": {
+      "href": "Erroraliniciarsesion.html",
+      "data-related": "[{\"title\":\"Error al iniciar sesion\",\"url\":\"Erroraliniciarsesion.html\"},{\"title\":\"Errores y resolucion\",\"url\":\"Erroresyresolucion.html\"}]"
+    }
+  },
+  {
+    "id": "9C6A8A3046F14CD9A35E5AC60564C017",
+    "parent": "#",
+    "text": "Glosario",
+    "a_attr": {
+      "href": "Glosario.html",
+      "data-related": "[{\"title\":\"Glosario\",\"url\":\"Glosario.html\"},{\"title\":\"Palabras y conceptos importantes\",\"url\":\"Palabrasyconceptosimportantes.html\"}]"
+    }
+  },
+  {
+    "id": "11C149619A124CD8A2EBD464087832AB",
+    "parent": "#",
+    "text": "Introduccion",
+    "a_attr": {
+      "href": "Introduccion.html",
+      "data-related": "[{\"title\":\"Introducción\",\"url\":\"Introduccion.html\"},{\"title\":\"Resumen de la aplicación\",\"url\":\"Resumendelaaplicacion.html\"},{\"title\":\"Principales características y beneficios\",\"url\":\"Principalescaracteristicasybenef.html\"}]"
+    }
+  },
+  {
+    "id": "EDB90C63CF7B484EB94D33A361A5B3C0",
+    "parent": "#",
+    "text": "Preguntas frecuentes",
+    "a_attr": {
+      "href": "Preguntasgenerales.html",
+      "data-related": "[{\"title\":\"Preguntas generales\",\"url\":\"Preguntasgenerales.html\"},{\"title\":\"Preguntas frecuentes (FAQ)\",\"url\":\"PreguntasfrecuentesFAQ.html\"}]"
+    }
+  },
+  {
+    "id": "25BBE6325C1640FC9091C8691BB91890",
+    "parent": "#",
+    "text": "Soporte",
+    "a_attr": {
+      "href": "Contacto.html",
+      "data-related": "[{\"title\":\"Contacto\",\"url\":\"Contacto.html\"},{\"title\":\"Enviar sugerencias\",\"url\":\"Enviarsugerencias.html\"},{\"title\":\"Soporte\",\"url\":\"Soporte.html\"}]"
+    }
+  }
+]
