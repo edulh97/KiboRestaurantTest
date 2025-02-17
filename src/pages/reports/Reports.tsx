@@ -93,7 +93,7 @@ const Report: React.FC = () => {
 
   const exportToPDF = async () => {
     const pdf = new jsPDF("p", "mm", "a4");
-    const margin = 10; // Margen en mm
+    const margin = 10;
     const pageWidth = pdf.internal.pageSize.getWidth() - 2 * margin;
 
     // Capturar la tabla como imagen
