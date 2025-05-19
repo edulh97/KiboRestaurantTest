@@ -2,7 +2,7 @@
     text-align: center;
     margin: 20px;
     background-color: #181616;
-    border-radius: 8px;
+    border-radius: 8px; 
     box-shadow: -5px 5px 25px rgba(0, 0, 0, 1);
     transition: all 0.3s ease;
     display: flex;
