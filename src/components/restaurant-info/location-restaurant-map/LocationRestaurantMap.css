@@ -1,7 +1,7 @@
 .location-container-map {
     text-align: center;
-    background-color: #D15150;
-    border-radius: 18px;
+    background-color: #181616;
+    border-radius: 8px;
     box-shadow: -5px 5px 25px rgba(0, 0, 0, 1);
     width: 90%;
     max-width: 600px;
@@ -11,6 +11,7 @@
     justify-content: center;
     margin: 30px auto;
     box-sizing: border-box;
+    color: white;
 }
 
 .location-container-map img {
@@ -18,7 +19,7 @@
     max-width: 600px;
     height: 90px;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {

@@ -7,7 +7,10 @@
   gap: 45px;
 }
 
-.Category-card, .Category-card-nigiris, .Category-card-favs, .Category-card-makis {
+.Category-card,
+.Category-card-nigiris,
+.Category-card-favs,
+.Category-card-makis {
   display: flex;
   width: 360px;
   height: 121px;
@@ -17,15 +20,16 @@
 }
 
 .Category-card {
-  background-color: #8b0000;
+  background-color: #181616;
 }
 
-.Category-card-nigiris, .Category-card-favs {
+.Category-card-nigiris,
+.Category-card-favs {
   background-color: #48ACAB;
 }
 
 .Category-card-makis {
-  background-color: #8b0000;
+  background-color: #181616;
 }
 
 .Image-container {
@@ -74,8 +78,8 @@
 }
 
 .Text-container {
-  width: 50%; 
-  height: 100%; 
+  width: 50%;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -86,8 +90,12 @@
   color: white;
 }
 
+/* Tablets */
 @media (min-width: 768px) and (max-width: 1024px) {
-  .Category-card, .Category-card-nigiris, .Category-card-favs, .Category-card-makis {
+  .Category-card,
+  .Category-card-nigiris,
+  .Category-card-favs,
+  .Category-card-makis {
     width: 500px;
     height: 150px;
   }
@@ -97,13 +105,65 @@
   }
 }
 
+/* Desktop */
 @media (min-width: 1025px) {
-  .Category-card, .Category-card-nigiris, .Category-card-favs, .Category-card-makis {
+  .Category-card,
+  .Category-card-nigiris,
+  .Category-card-favs,
+  .Category-card-makis {
     width: 450px;
     height: 150px;
   }
 
   .Category-text {
     font-size: 40px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+  .cards-container {
+    gap: 30px;
+    height: auto;
+    padding-bottom: 40px;
+  }
+
+  .Category-card,
+  .Category-card-nigiris,
+  .Category-card-favs,
+  .Category-card-makis {
+    width: 90%;
+    height: 100px;
+    flex-direction: row;
+  }
+
+  .Image-container,
+  .Text-container {
+    width: 50%;
+    height: 100%;
+  }
+
+  .Category-text {
+    font-size: 22px;
+  }
+
+  .Image-container img {
+    width: 120%;
+    transform: translate(-50%, -50%) scale(0.6);
+  }
+
+  .Image-container-nigiris img {
+    width: 100%;
+    transform: translate(-50%, -50%) scale(0.7);
+  }
+
+  .Category-card-makis img {
+    width: 100%;
+    transform: translate(-50%, -50%) scale(0.85);
+  }
+
+  .Category-card-favs img {
+    width: 100%;
+    transform: translate(-50%, -50%) scale(0.9);
   }
 }

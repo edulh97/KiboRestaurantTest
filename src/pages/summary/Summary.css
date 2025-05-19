@@ -4,9 +4,9 @@
   width: 80%; /* Ajusta el ancho de la lista según necesites */
   max-width: 600px; /* Limita el tamaño máximo */
   background-color: rgb(255, 255, 255);
-  border-radius: 25px;
+  border-radius: 8px;
   padding: 25px;
-  border: 2px solid black;
+  box-shadow: "0 4px 8px rgba(0, 0, 0, 0.1)";
   margin: 0 auto; /* Centra el <ul> horizontalmente */
 }
 
@@ -55,7 +55,7 @@
 
 .order-price {
   font-size: 1rem;
-  color: #DA4B4E;
+  color: #48ACAB;
 }
 
 .order-total {
@@ -76,7 +76,6 @@
   color: white;
   margin-top: -20px;
 }
-
 
 .checkbox {
   text-align: center;
@@ -112,17 +111,18 @@
 }
 
 .order-button:hover {
-  background-color: #DA4B4E;
+  background-color: #48ACAB;
 }
 
 @media (max-width: 768px) {
+  /* Ajustes para pantallas móviles */
   .order-list {
-    width: 90%;
+    width: 75%;
     padding: 15px;
   }
 
   .checkbox {
-    font-size: 20px;
+    font-size: 18px; /* Reducir tamaño de texto */
   }
 
   .order-item {
@@ -131,7 +131,7 @@
   }
 
   .order-name {
-    font-size: 1.2rem; 
+    font-size: 1.2rem;
   }
 
   .order-total {
@@ -148,13 +148,14 @@
 }
 
 @media (min-width: 1024px) {
+  /* Ajustes para pantallas grandes */
   .order-list {
     width: 60%;
-    padding: 30px;
+    padding: 20px;
   }
 
   .checkbox {
-    font-size: 30px; 
+    font-size: 30px; /* Aumentar tamaño de texto */
   }
 
   .order-item {

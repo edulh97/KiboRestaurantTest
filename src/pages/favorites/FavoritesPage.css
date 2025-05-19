@@ -1,6 +1,6 @@
 .favorites-container {
     text-align: center;
-    margin-top: 2rem;
+    margin-top: 5rem;
   }
   
   .favorites-list {
@@ -16,7 +16,7 @@
     border-radius: 8px;
     width: 200px;
     text-align: center;
-    background-color:#7E0809 ;
+    background-color:#48ACAB ;
   }
   
   .favorite-item h2 {
@@ -25,6 +25,6 @@
   
   .favorite-item a {
     text-decoration: none;
-    color: #48ACAB;
+    color: white;
   }
   

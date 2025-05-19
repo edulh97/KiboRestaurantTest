@@ -1,8 +1,8 @@
 .location-container {
     text-align: center;
     margin: 20px;
-    background-color: #D15150;
-    border-radius: 18px;
+    background-color: #181616;
+    border-radius: 8px;
     box-shadow: -5px 5px 25px rgba(0, 0, 0, 1);
     transition: all 0.3s ease;
     display: flex;
@@ -27,7 +27,7 @@
     width: 100%;
     height: auto;
     object-fit: cover;
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.6);
     transition: all 0.3s ease;
     
