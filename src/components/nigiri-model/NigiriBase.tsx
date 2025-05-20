@@ -1,3 +1,5 @@
+// src/components/nigiri-model/NigiriBase.tsx
+import React, { useState, useEffect } from "react";
 import {
   Button,
   makeStyles,
@@ -9,17 +11,13 @@ import {
   Body1Strong,
   mergeClasses,
 } from "@fluentui/react-components";
-import {
-  HeartFilled,
-  DismissCircleRegular,
-  HeartRegular,
-} from "@fluentui/react-icons";
+import { HeartFilled, DismissCircleRegular, HeartRegular } from "@fluentui/react-icons";
 import { useSwipeable } from "react-swipeable";
-import { useState, useEffect } from "react";
 import { useOrder } from "../../context/OrderContext";
 import { useFavorites } from "../../context/FavoritesContext";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import BackButton from "../back-button/BackButton";
+import { fetchAverageRating } from "../../services/api";
 
 const useStyles = makeStyles({
   container: {
@@ -41,7 +39,7 @@ const useStyles = makeStyles({
     top: "-28px",
     left: "50%",
     transform: "translateX(-50%)",
-    backgroundColor: "none",
+    background: "none",
     padding: "6px 14px",
     borderRadius: "8px",
     fontWeight: "bold",
@@ -57,19 +55,13 @@ const useStyles = makeStyles({
     userSelect: "none",
   },
   imageWrapper: {
-    position: "relative",  // para que rating absoluto se posicione respecto aquí
+    position: "relative",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
     height: "250px",
-    minWidth: "200px",
+    width: "200px",
     maxWidth: "500px",
-    "@media (max-width: 768px)": {
-      height: "300px",
-    },
-    "@media (max-width: 480px)": {
-      height: "250px",
-    },
   },
   image: {
     width: "100%",
@@ -78,12 +70,6 @@ const useStyles = makeStyles({
     objectFit: "cover",
     borderRadius: tokens.borderRadiusMedium,
     padding: "20px",
-    "@media (min-width: 768px)": {
-      maxWidth: "400px",
-    },
-    "@media (min-width: 1024px)": {
-      maxWidth: "500px",
-    },
   },
   infoContainer: {
     width: "fit-content",
@@ -100,8 +86,7 @@ const useStyles = makeStyles({
     bottom: 0,
     width: "100%",
     maxWidth: "500px",
-    background:
-      "linear-gradient(to top,rgb(150, 141, 141),rgb(255, 255, 255))",
+    background: "linear-gradient(to top, rgb(150, 141, 141), rgb(255, 255, 255))",
     boxShadow: "0 -4px 8px rgba(0, 0, 0, 0.2)",
     display: "flex",
     flexDirection: "column",
@@ -109,7 +94,6 @@ const useStyles = makeStyles({
     padding: tokens.spacingVerticalM,
     gap: tokens.spacingVerticalS,
     borderRadius: "10px",
-    margin: "0px",
     zIndex: 10,
     maxHeight: "calc(100vh - 200px)",
     overflowY: "auto",
@@ -126,7 +110,7 @@ const useStyles = makeStyles({
   priceText: {
     fontSize: "20px",
     marginLeft: "10px",
-    color: "Black",
+    color: "black",
   },
   heartButtons: {
     display: "flex",
@@ -147,16 +131,13 @@ const useStyles = makeStyles({
     },
   },
   menuNav: {
-    top: "40px",
     display: "flex",
-    flexDirection: "row",
     justifyContent: "center",
     gap: "10px",
     marginTop: tokens.spacingVerticalM,
     flexWrap: "wrap",
   },
   menuButton: {
-    top: "40px",
     backgroundColor: "white",
     borderRadius: "8px",
     boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
@@ -165,14 +146,6 @@ const useStyles = makeStyles({
     height: "40px",
     padding: "0",
     cursor: "pointer",
-    ":active": {
-      backgroundColor: "#48ACAB",
-      color: "white",
-    },
-    "@media (max-width: 480px)": {
-      width: "30px",
-      height: "30px",
-    },
     ":hover": {
       backgroundColor: "#48ACAB",
       color: "white",
@@ -187,7 +160,7 @@ const useStyles = makeStyles({
 });
 
 interface NigiriProps {
-  id: string;
+  productId: string;
   name: string;
   price: number;
   image: string;
@@ -196,91 +169,90 @@ interface NigiriProps {
   allergens: string;
 }
 
-function NigiriBase({
-  id,
+const NigiriBase: React.FC<NigiriProps> = ({
+  productId,
   name,
   price,
   image,
   description,
   ingredients,
   allergens,
-}: NigiriProps) {
+}) => {
   const styles = useStyles();
   const navigate = useNavigate();
-  const location = useLocation();
   const { total, updateTotal } = useOrder();
   const { favorites, addFavorite, removeFavorite } = useFavorites();
 
-  const [quantity, setQuantity] = useState(
-    () => parseInt(localStorage.getItem(`${id}Quantity`) || "0", 10)
+  const [quantity, setQuantity] = useState(() =>
+    parseInt(localStorage.getItem(`${productId}Quantity`) || "0", 10)
   );
   const [prevQuantity, setPrevQuantity] = useState(quantity);
   const [liked, setLiked] = useState(favorites.includes(name));
   const [disliked, setDisliked] = useState(
-    () => JSON.parse(localStorage.getItem(`${id}Disliked`) || "false")
+    () => JSON.parse(localStorage.getItem(`${productId}Disliked`) || "false")
   );
-  const [activeProduct, setActiveProduct] = useState<string | null>(null);
   const [averageRating, setAverageRating] = useState<number | null>(null);
 
+  // Cargar promedio desde el back
   useEffect(() => {
-    const stored = localStorage.getItem(`${id}Ratings`);
-    if (stored) {
-      const ratings = JSON.parse(stored) as number[];
-      if (ratings.length) {
-        const avg =
-          ratings.reduce((a, b) => a + b, 0) / ratings.length;
-        setAverageRating(parseFloat(avg.toFixed(1)));
-      } else {
-        setAverageRating(null);
-      }
-    } else {
-      setAverageRating(null);
-    }
-  }, [id]);
+    let cancelled = false;
+    fetchAverageRating(productId)
+      .then(avg => {
+        if (!cancelled) {
+          setAverageRating(avg > 0 ? parseFloat(avg.toFixed(1)) : null);
+        }
+      })
+      .catch(err => {
+        console.error("Error al cargar promedio:", err);
+        if (!cancelled) setAverageRating(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [productId]);
 
+  // Persistir cantidad y dislike
   useEffect(() => {
-    const productId = location.pathname.match(/Nigiri(\d)/)?.[1];
-    setActiveProduct(productId || null);
-  }, [location.pathname]);
-
-  useEffect(() => {
-    localStorage.setItem(`${id}Quantity`, quantity.toString());
+    localStorage.setItem(`${productId}Quantity`, quantity.toString());
+    localStorage.setItem(`${productId}Disliked`, JSON.stringify(disliked));
     if (quantity > 0) {
-      localStorage.setItem(`${id}Name`, name);
-      localStorage.setItem(`${id}Price`, price.toString());
+      localStorage.setItem(`${productId}Name`, name);
+      localStorage.setItem(`${productId}Price`, price.toString());
     } else {
-      localStorage.removeItem(`${id}Name`);
-      localStorage.removeItem(`${id}Price`);
+      localStorage.removeItem(`${productId}Name`);
+      localStorage.removeItem(`${productId}Price`);
     }
-
     if (quantity !== prevQuantity) {
       updateTotal(total + price * (quantity - prevQuantity));
       setPrevQuantity(quantity);
     }
-
-    localStorage.setItem(`${id}Disliked`, JSON.stringify(disliked));
-  }, [quantity, prevQuantity, price, updateTotal, total, id, name, disliked]);
+  }, [quantity, prevQuantity, price, total, updateTotal, productId, name, disliked]);
 
   const handleQuantityChange = (delta: number) => {
-    setQuantity((prev) => Math.max(prev + delta, 0));
+    setQuantity(q => Math.max(q + delta, 0));
   };
 
   const toggleLike = () => {
-    setLiked(!liked);
-    setDisliked(false);
-    liked ? removeFavorite(name) : addFavorite(name);
+    setLiked(lk => {
+      const now = !lk;
+      now ? addFavorite(name) : removeFavorite(name);
+      if (now) setDisliked(false);
+      return now;
+    });
   };
 
   const toggleDislike = () => {
-    setDisliked(!disliked);
-    setLiked(false);
+    setDisliked(d => {
+      const now = !d;
+      if (now) setLiked(false);
+      return now;
+    });
   };
 
   const getNextDish = (): string | null => {
-    const ids = [2, 3, 4, 5];
-    for (const id of ids) {
-      if (!JSON.parse(localStorage.getItem(`Nigiri${id}Disliked`) || "false")) {
-        return `Nigiri${id}`;
+    for (const n of [1, 2, 3, 4, 5]) {
+      if (!JSON.parse(localStorage.getItem(`Nigiri${n}Disliked`) || "false")) {
+        return `Nigiri${n}`;
       }
     }
     return null;
@@ -299,16 +271,20 @@ function NigiriBase({
     <div {...handlers} className={styles.container}>
       <BackButton to="/Main-Menu" />
 
-
-      {/* Imagen + rating dentro de contenedor para posicionar */}
       <div className={styles.imageWrapper}>
         <img src={image} alt={name} className={styles.image} />
         <Button
           appearance="subtle"
           className={styles.rating}
-          onClick={() => navigate(`/Product-Reviews/${id}`)}
+          onClick={() =>
+            navigate("/Product-Resenas", {
+              state: { productId },      // <-- aquí paso la id
+            })
+          }
         >
-          {averageRating !== null ? `${averageRating} / 5 ⭐` : "No ratings"}
+          {averageRating !== null
+            ? `${averageRating} / 5 ⭐`
+            : "Sin reseñas"}
         </Button>
       </div>
 
@@ -327,17 +303,14 @@ function NigiriBase({
       </div>
 
       <div className={styles.menuNav}>
-        {[1, 2, 3, 4, 5].map((n) => (
+        {[1, 2, 3, 4, 5].map(n => (
           <Button
             key={n}
             className={mergeClasses(
               styles.menuButton,
-              activeProduct === `${n}` && styles.active
+              productId === `${n}` && styles.active
             )}
-            onClick={() => {
-              navigate(`/Nigiri${n}`);
-              setActiveProduct(`${n}`);
-            }}
+            onClick={() => navigate(`/Nigiri${n}`)}
           >
             {n}
           </Button>
@@ -363,19 +336,20 @@ function NigiriBase({
               +
             </Button>
           </div>
-          <Body1Strong className={styles.priceText}>+ {price.toFixed(2)} $</Body1Strong>
+          <Body1Strong className={styles.priceText}>
+            + {price.toFixed(2)} $
+          </Body1Strong>
           <div className={styles.heartButtons}>
             <Button icon={liked ? <HeartFilled /> : <HeartRegular />} onClick={toggleLike} />
             <Button icon={<DismissCircleRegular />} onClick={toggleDislike} />
           </div>
         </div>
-
         <Button className={styles.orderButton} onClick={() => navigate("/Local-Summary")}>
           Make Order – {total.toFixed(2)} $
         </Button>
       </div>
     </div>
   );
-}
+};
 
 export default NigiriBase;
