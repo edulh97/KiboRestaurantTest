@@ -242,7 +242,7 @@ const NigiriBase: React.FC<NigiriProps> = ({
   };
 
   const toggleDislike = () => {
-    setDisliked(d => {
+    setDisliked((d: any) => {
       const now = !d;
       if (now) setLiked(false);
       return now;

@@ -17,6 +17,7 @@ import FavoritesPage from './pages/favorites/FavoritesPage';
 import User from './pages/Users/Usuarios';
 import Report from './pages/reports/Reports';
 import ProductResenas from './pages/resenas/Product-Resenas';
+import Usuario from './pages/Users/Usuario';
 
 function App() {
   return (
@@ -38,6 +39,8 @@ function App() {
               <Route path='/Local-Summary' element={<LocalSummary />} />
               <Route path='/Favorites' element={<FavoritesPage />} />
               <Route path='/Usuarios' element={<User />} />
+              {/* <Route path='/User-Profile' element={<Usuario nombre={''} correo={''} direccion={''} tipo={''} />} /> */}
+              <Route path='/User-Profile' element={<Usuario/>} />
               <Route path='/Reports' element={<Report />} />
               <Route path='/Product-Resenas' element={<ProductResenas />} />
               <Route path='/*' element={<Home />} />
