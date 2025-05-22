@@ -17,6 +17,7 @@ import FavoritesPage from './pages/favorites/FavoritesPage';
 import User from './pages/Users/Usuarios';
 import Report from './pages/reports/Reports';
 import ProductResenas from './pages/resenas/Product-Resenas';
+import Products from './pages/products/Products';
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
               <Route path='/Usuarios' element={<User />} />
               <Route path='/Reports' element={<Report />} />
               <Route path='/Product-Resenas' element={<ProductResenas />} />
+              <Route path='/Products' element={<Products />} />
               <Route path='/*' element={<Home />} />
             </Routes>
           </BrowserRouter>
