@@ -17,6 +17,7 @@ import FavoritesPage from './pages/favorites/FavoritesPage';
 import User from './pages/Users/Usuarios';
 import Report from './pages/reports/Reports';
 import ProductResenas from './pages/resenas/Product-Resenas';
+import Products from './pages/products/Products';
 import Usuario from './pages/Users/Usuario';
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
               <Route path='/User-Profile' element={<Usuario/>} />
               <Route path='/Reports' element={<Report />} />
               <Route path='/Product-Resenas' element={<ProductResenas />} />
+              <Route path='/Products' element={<Products />} />
               <Route path='/*' element={<Home />} />
             </Routes>
           </BrowserRouter>
