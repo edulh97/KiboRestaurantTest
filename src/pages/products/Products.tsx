@@ -1,186 +1,242 @@
 /* src/components/Products.tsx */
 import React, { useEffect, useState } from 'react';
 import {
-    getCategorias,
-    getProductos,
-    createProducto,
-    updateProducto,
-    deleteProducto,
-    assignCategoria,
-    removeCategoria,
+  DefaultButton,
+  PrimaryButton,
+  TextField,
+  IconButton,
+  Stack,
+  mergeStyles,
+  FontIcon,
+  Label,
+} from '@fluentui/react';
+import {
+  getCategorias,
+  getProductos,
+  createProducto,
+  updateProducto,
+  deleteProducto,
+  assignCategoria,
+  removeCategoria,
 } from '../../services/api';
 
 import { Producto, Categoria } from './Products-model';
 
+const cardStyle = mergeStyles({
+  background: '#fff',
+  padding: 24,
+  borderRadius: 16,
+  boxShadow: '0 6px 18px rgba(0, 0, 0, 0.08)',
+  marginBottom: 24,
+  transition: 'all 0.3s ease',
+  selectors: {
+    ':hover': {
+      boxShadow: '0 10px 24px rgba(0, 0, 0, 0.1)',
+    },
+  },
+});
+
+const productItemStyle = mergeStyles({
+  padding: 16,
+  background: '#f4f6f9',
+  borderRadius: 10,
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  border: '1px solid #e1e1e1',
+  boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.05)',
+});
+
 const Products: React.FC = () => {
-    const [categorias, setCategorias] = useState<Categoria[]>([]);
-    const [productos, setProductos] = useState<Producto[]>([]);
-    const [expandedIds, setExpandedIds] = useState<number[]>([]);
-    const [formCatId, setFormCatId] = useState<number | null>(null);
-    const [formData, setFormData] = useState<Omit<Producto, 'id' | 'categorias'>>({
-        nombreProducto: '',
-        precio: 0,
-        descripcion: '',
-        alergenos: '',
-    });
-    const [editingId, setEditingId] = useState<number | null>(null);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [productos, setProductos] = useState<Producto[]>([]);
+  const [expandedIds, setExpandedIds] = useState<number[]>([]);
+  const [formCatId, setFormCatId] = useState<number | null>(null);
+  const [formData, setFormData] = useState<Omit<Producto, 'id' | 'categorias'>>({
+    nombreProducto: '',
+    precio: 0,
+    descripcion: '',
+    alergenos: '',
+  });
+  const [editingId, setEditingId] = useState<number | null>(null);
 
-    useEffect(() => {
-        fetchAll();
-    }, []);
+  useEffect(() => {
+    fetchAll();
+  }, []);
 
-    const fetchAll = async () => {
-        const cats = await getCategorias();
-        const prods = await getProductos();
-        setCategorias(cats);
-        setProductos(prods);
-    };
+  const fetchAll = async () => {
+    const cats = await getCategorias();
+    const prods = await getProductos();
+    setCategorias(cats);
+    setProductos(prods);
+  };
 
-    const toggle = (id: number) => {
-        setExpandedIds(s =>
-            s.includes(id) ? s.filter(x => x !== id) : [...s, id]
-        );
-    };
-
-    const openForm = (catId: number, prod?: Producto) => {
-        setFormCatId(catId);
-        if (prod) {
-            setEditingId(prod.id);
-            setFormData({
-                nombreProducto: prod.nombreProducto,
-                precio: prod.precio,
-                descripcion: prod.descripcion,
-                alergenos: prod.alergenos,
-            });
-        } else {
-            setEditingId(null);
-            setFormData({ nombreProducto: '', precio: 0, descripcion: '', alergenos: '' });
-        }
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!formCatId) return;
-        let prod: Producto;
-        if (editingId) {
-            prod = await updateProducto(editingId, formData);
-        } else {
-            prod = await createProducto(formData);
-            await assignCategoria(prod.id, formCatId);
-        }
-        await fetchAll();
-        cancelForm();
-        setExpandedIds(prev => [...new Set([...prev, formCatId])]);
-    };
-
-    const cancelForm = () => {
-        setFormCatId(null);
-        setEditingId(null);
-        setFormData({ nombreProducto: '', precio: 0, descripcion: '', alergenos: '' });
-    };
-
-    const handleDelete = async (prodId: number, catId: number) => {
-        await removeCategoria(prodId, catId);
-        // opcional: borrar producto completamente
-        // await deleteProducto(prodId);
-        fetchAll();
-    };
-
-    return (
-        <div className="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-md">
-            <h1 className="text-3xl font-semibold mb-6 text-center">Categorías y Productos</h1>
-            {categorias.map(cat => (
-                <div key={cat.id} className="mb-5 bg-white rounded-lg shadow-sm hover:shadow-md transition p-4">
-                    <div
-                        className="flex justify-between items-center cursor-pointer"
-                        onClick={() => toggle(cat.id)}
-                    >
-                        <h2 className="text-xl font-bold text-gray-800">{cat.nombreCategoria}</h2>
-                        <span className="text-gray-500">{expandedIds.includes(cat.id) ? '−' : '+'}</span>
-                    </div>
-
-                    {expandedIds.includes(cat.id) && (
-                        <div className="mt-4">
-                            <button
-                                className="mb-3 px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-medium rounded"
-                                onClick={() => openForm(cat.id)}
-                            >
-                                Añadir Producto
-                            </button>
-
-                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {productos
-                                    .filter(p => p.categorias?.some(c => c.id === cat.id))
-                                    .map(p => (
-                                        <li key={p.id} className="bg-gray-100 rounded flex justify-between items-center p-3">
-                                            <span className="font-medium text-gray-700">{p.nombreProducto}</span>
-                                            <div className="space-x-2">
-                                                <button
-                                                    className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded"
-                                                    onClick={() => openForm(cat.id, p)}
-                                                >
-                                                    Editar
-                                                </button>
-                                                <button
-                                                    className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded"
-                                                    onClick={() => handleDelete(p.id, cat.id)}
-                                                >
-                                                    Quitar
-                                                </button>
-                                            </div>
-                                        </li>
-                                    ))}
-                            </ul>
-
-                            {(formCatId === cat.id) && (
-                                <form onSubmit={handleSubmit} className="mt-4 space-y-3 bg-white p-4 rounded shadow-sm">
-                                    <input
-                                        className="border border-gray-300 p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                                        placeholder="Nombre del producto"
-                                        value={formData.nombreProducto}
-                                        onChange={e => setFormData(f => ({ ...f, nombreProducto: e.target.value }))}
-                                        required
-                                    />
-                                    <input
-                                        type="number"
-                                        step="0.01"
-                                        className="border border-gray-300 p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                                        placeholder="Precio"
-                                        value={formData.precio}
-                                        onChange={e => setFormData(f => ({ ...f, precio: parseFloat(e.target.value) }))}
-                                        required
-                                    />
-                                    <input
-                                        className="border border-gray-300 p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                                        placeholder="Descripción"
-                                        value={formData.descripcion}
-                                        onChange={e => setFormData(f => ({ ...f, descripcion: e.target.value }))}
-                                        required
-                                    />
-                                    <input
-                                        className="border border-gray-300 p-2 w-full rounded focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                                        placeholder="Alergenos"
-                                        value={formData.alergenos}
-                                        onChange={e => setFormData(f => ({ ...f, alergenos: e.target.value }))}
-                                        required
-                                    />
-                                    <div className="flex space-x-3">
-                                        <button type="submit" className="flex-1 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded font-semibold">
-                                            {editingId ? 'Actualizar' : 'Crear'}
-                                        </button>
-                                        <button type="button" className="flex-1 px-4 py-2 bg-gray-400 hover:bg-gray-500 text-white rounded" onClick={cancelForm}>
-                                            Cancelar
-                                        </button>
-                                    </div>
-                                </form>
-                            )}
-                        </div>
-                    )}
-                </div>
-            ))}
-        </div>
+  const toggle = (id: number) => {
+    setExpandedIds((s) =>
+      s.includes(id) ? s.filter((x) => x !== id) : [...s, id]
     );
-};
+  };
 
+  const openForm = (catId: number, prod?: Producto) => {
+    setFormCatId(catId);
+    if (prod) {
+      setEditingId(prod.id);
+      setFormData({
+        nombreProducto: prod.nombreProducto,
+        precio: prod.precio,
+        descripcion: prod.descripcion,
+        alergenos: prod.alergenos,
+      });
+    } else {
+      setEditingId(null);
+      setFormData({ nombreProducto: '', precio: 0, descripcion: '', alergenos: '' });
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formCatId) return;
+    let prod: Producto;
+    if (editingId) {
+      prod = await updateProducto(editingId, formData);
+    } else {
+      prod = await createProducto(formData);
+      await assignCategoria(prod.id, formCatId);
+    }
+    await fetchAll();
+    cancelForm();
+    setExpandedIds((prev) => [...new Set([...prev, formCatId])]);
+  };
+
+  const cancelForm = () => {
+    setFormCatId(null);
+    setEditingId(null);
+    setFormData({ nombreProducto: '', precio: 0, descripcion: '', alergenos: '' });
+  };
+
+  const handleDelete = async (prodId: number, catId: number) => {
+    await removeCategoria(prodId, catId);
+    fetchAll();
+  };
+
+  return (
+    <div style={{ maxWidth: 1000, margin: '0 auto', padding: 24 }}>
+      <h1 style={{ fontSize: 32, fontWeight: 700, textAlign: 'center', marginBottom: 32 }}>
+        Gestor de Productos
+      </h1>
+      {categorias.map((cat) => (
+        <div key={cat.id} className={cardStyle}>
+          <div
+            style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}
+            onClick={() => toggle(cat.id)}
+          >
+            <Label styles={{ root: { fontSize: 20, fontWeight: '600' } }}>{cat.nombreCategoria}</Label>
+            <span style={{ fontSize: 20 }}>{expandedIds.includes(cat.id) ? '−' : '+'}</span>
+          </div>
+
+          {expandedIds.includes(cat.id) && (
+            <div style={{ marginTop: 20 }}>
+              <PrimaryButton
+                text="Añadir Producto"
+                onClick={() => openForm(cat.id)}
+                styles={{ root: { marginBottom: 20, background: '#48ACAB', border: 'none' }, rootHovered: { background: '#3e9999' } }}
+              />
+
+              <Stack tokens={{ childrenGap: 12 }}>
+                {productos
+                  .filter((p) => p.categorias?.some((c) => c.id === cat.id))
+                  .map((p) => (
+                    <div key={p.id} className={productItemStyle}>
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: 16 }}>{p.nombreProducto}</div>
+                        <div style={{ color: '#666', fontSize: 13 }}>{p.descripcion}</div>
+                        <div style={{ fontSize: 14, marginTop: 6 }}>
+                          <strong>Precio:</strong> €{p.precio.toFixed(2)} | <strong>Alergenos:</strong> {p.alergenos}
+                        </div>
+                      </div>
+                      <Stack horizontal tokens={{ childrenGap: 8 }}>
+                        <DefaultButton
+                          text="Editar"
+                          onClick={() => openForm(cat.id, p)}
+                          styles={{
+                            root: {
+                              background: '#48ACAB',
+                              color: '#fff',
+                              border: 'none',
+                            },
+                            rootHovered: {
+                              background: '#3e9999',
+                              color: '#fff',
+                            },
+                          }}
+                        />
+                        <DefaultButton
+                          text="Quitar"
+                          onClick={() => handleDelete(p.id, cat.id)}
+                          styles={{
+                            root: {
+                              background: '#f44336',
+                              color: '#fff',
+                              border: 'none',
+                            },
+                            rootHovered: {
+                              background: '#d32f2f',
+                              color: '#fff',
+                            },
+                          }}
+                        />
+                      </Stack>
+                    </div>
+                  ))}
+              </Stack>
+
+              {formCatId === cat.id && (
+                <form onSubmit={handleSubmit} style={{ marginTop: 24, padding: 16, background: '#fafafa', borderRadius: 8, border: '1px solid #ddd' }}>
+                  <h3 style={{ marginBottom: 12 }}>{editingId ? 'Editar producto' : 'Nuevo producto'}</h3>
+                  <Stack tokens={{ childrenGap: 12 }}>
+                    <TextField
+                      label="Nombre del producto"
+                      value={formData.nombreProducto}
+                      required
+                      onChange={(_, v) => setFormData((f) => ({ ...f, nombreProducto: v || '' }))}
+                    />
+                    <TextField
+                      label="Precio (€)"
+                      type="number"
+                      step={0.01}
+                      value={formData.precio.toString()}
+                      required
+                      onChange={(_, v) => setFormData((f) => ({ ...f, precio: parseFloat(v || '0') }))}
+                    />
+                    <TextField
+                      label="Descripción"
+                      value={formData.descripcion}
+                      required
+                      onChange={(_, v) => setFormData((f) => ({ ...f, descripcion: v || '' }))}
+                    />
+                    <TextField
+                      label="Alergenos"
+                      value={formData.alergenos}
+                      required
+                      onChange={(_, v) => setFormData((f) => ({ ...f, alergenos: v || '' }))}
+                    />
+                    <Stack horizontal tokens={{ childrenGap: 12 }}>
+                      <PrimaryButton
+                        type="submit"
+                        text={editingId ? 'Actualizar' : 'Crear'}
+                        styles={{ root: { background: '#48ACAB', border: 'none' }, rootHovered: { background: '#3e9999' } }}
+                      />
+                      <DefaultButton text="Cancelar" onClick={cancelForm} />
+                    </Stack>
+                  </Stack>
+                </form>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
 
 export default Products;
