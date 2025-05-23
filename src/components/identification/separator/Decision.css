@@ -18,29 +18,29 @@
     cursor: pointer;
     border: none;
     border-radius: 10px;
-    background-color: #DA4B4E;
+    background-color: #181616;
     color: white;
     transition: background-color 0.3s ease, transform 0.2s;
-    width: 100%;
+    width: 500px;
     max-width: 500px;
     box-shadow: -5px 5px 20px rgba(0, 0, 0, 0.6);
 }
 
 .button1:hover {
-    background-color: #B12F2F;
+    box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.7);
     transform: scale(1.05);
 }
 
 .button2 {
-    padding: 12px 24px;
-    font-size: 30px;
+    padding: 6px 12px;
+    font-size: 15px;
     font-family: 'Jaro', sans-serif;
     cursor: pointer;
     border: none;
     border-radius: 10px;
     background-color: #48ACAB;
     color: white;
-    width: 100%;
+    width: 520px;
     max-width: 500px;
     box-shadow: -5px 5px 20px rgba(0, 0, 0, 0.6);
     transition: background-color 0.3s ease, transform 0.2s;
@@ -74,7 +74,6 @@
 
 /* Texto "or" centrado sobre la línea */
 .or {
-    background-color: #912D2E;
     padding: 0 10px;
     position: relative;
     z-index: 1;

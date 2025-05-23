@@ -39,7 +39,7 @@
 /* Estilo para el botón de submit */
 .button-guest {
     font-family: 'Poppins';
-    background-color: #DA4B4E;
+    background-color: #48ACAB;
     color: white;
     /* Color de texto blanco */
     padding: 30px;
@@ -56,7 +56,6 @@
     color: white; /* Asegúrate de que el texto sea legible */
     transform: scale(0.98); /* Opcional: agrega un pequeño efecto de reducción */
 }
-
 
 .input-field::placeholder {
     color: #888;
@@ -84,10 +83,10 @@
     font-size: 1.5rem;
 }
 
-
 .signin-link:hover {
-    color: #DA4B4E;
+    color: #357c7b;
 }
+
 /* Contenedor para el enlace de cuenta */
 .account-link-container {
     margin-top: 10px; /* Controla la distancia entre el campo de password y el enlace */
@@ -109,16 +108,56 @@
 }
 
 .signin-link:hover {
-    color: #DA4B4E;
+    color: #357c7b;
 }
 
 @media (max-width: 768px) {
+    .form-container {
+        padding: 10px; /* Menos padding en pantallas pequeñas */
+        height: auto; /* El formulario puede tener un alto variable */
+    }
+
     .ant-form {
-        width: 100%;
-        padding: 15px;
+        padding: 15px; /* Menos padding en dispositivos móviles */
+        max-width: 90%; /* El formulario ocupa un 90% del ancho en dispositivos pequeños */
+    }
+
+    .form-item {
+        margin-bottom: 20px; /* Menos margen entre los items */
+    }
+
+    .input-field {
+        padding: 12px; /* Menos padding para entradas pequeñas */
+    }
+
+    .button-guest {
+        padding: 18px; /* Menos padding en el botón */
+        font-size: 1rem; /* Ajustamos el tamaño de la fuente */
+    }
+
+    .signin-text {
+        font-size: 1rem;
+    }
+
+    .signin-link {
+        font-size: 1rem; /* Ajuste de tamaño para el enlace */
     }
 }
 
+@media (max-width: 480px) {
+    .form-container {
+        padding: 5px; /* Asegura que haya más espacio en dispositivos muy pequeños */
+    }
+
+    .ant-form {
+        max-width: 100%; /* El formulario ocupa el 100% del ancho */
+    }
+
+    .button-guest {
+        font-size: 0.9rem; /* Ajuste de tamaño en dispositivos más pequeños */
+        padding: 15px; /* Menos padding en pantallas pequeñas */
+    }
+}
 
 /* Ocultar las flechas para los input[type="number"] en diferentes navegadores */
 input[type="number"]::-webkit-outer-spin-button,

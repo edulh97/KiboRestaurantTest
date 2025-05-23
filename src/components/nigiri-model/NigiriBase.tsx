@@ -1,161 +1,355 @@
-import { useState, useEffect } from "react";
+// src/components/nigiri-model/NigiriBase.tsx
+import React, { useState, useEffect } from "react";
+import {
+  Button,
+  makeStyles,
+  tokens,
+  Text,
+  Caption1,
+  Title2,
+  Body1,
+  Body1Strong,
+  mergeClasses,
+} from "@fluentui/react-components";
+import { HeartFilled, DismissCircleRegular, HeartRegular } from "@fluentui/react-icons";
+import { useSwipeable } from "react-swipeable";
 import { useOrder } from "../../context/OrderContext";
 import { useFavorites } from "../../context/FavoritesContext";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import "./Nigiri.css";
-import { useSwipeable } from "react-swipeable";
+import { useNavigate } from "react-router-dom";
 import BackButton from "../back-button/BackButton";
+import { fetchAverageRating } from "../../services/api";
+
+const useStyles = makeStyles({
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: tokens.spacingHorizontalXL,
+    gap: tokens.spacingVerticalL,
+    backgroundColor: tokens.colorNeutralBackground1,
+    marginTop: "50px",
+  },
+  ratingWrapper: {
+    position: "relative",
+    display: "inline-block",
+    marginBottom: tokens.spacingVerticalS,
+  },
+  rating: {
+    position: "absolute",
+    top: "-28px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    background: "none",
+    padding: "6px 14px",
+    borderRadius: "8px",
+    fontWeight: "bold",
+    fontSize: "16px",
+    color: "#48ACAB",
+    cursor: "pointer",
+    textDecoration: "underline",
+    zIndex: 5,
+    transition: "background 0.3s",
+    ":hover": {
+      transform: "translateX(-50%) scale(1.05)",
+    },
+    userSelect: "none",
+  },
+  imageWrapper: {
+    position: "relative",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: "250px",
+    width: "200px",
+    maxWidth: "500px",
+  },
+  image: {
+    width: "100%",
+    maxWidth: "300px",
+    height: "auto",
+    objectFit: "cover",
+    borderRadius: tokens.borderRadiusMedium,
+    padding: "20px",
+  },
+  infoContainer: {
+    width: "fit-content",
+    maxWidth: "600px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center",
+    gap: tokens.spacingVerticalM,
+    marginBottom: "50px",
+  },
+  controlsWrapper: {
+    position: "fixed",
+    bottom: 0,
+    width: "100%",
+    maxWidth: "500px",
+    background: "linear-gradient(to top, rgb(150, 141, 141), rgb(255, 255, 255))",
+    boxShadow: "0 -4px 8px rgba(0, 0, 0, 0.2)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    padding: tokens.spacingVerticalM,
+    gap: tokens.spacingVerticalS,
+    borderRadius: "10px",
+    zIndex: 10,
+    maxHeight: "calc(100vh - 200px)",
+    overflowY: "auto",
+  },
+  quantityControl: {
+    display: "flex",
+    alignItems: "center",
+    backgroundColor: "white",
+    padding: "0 12px",
+    height: "50px",
+    borderRadius: "10px",
+    marginLeft: "20px",
+  },
+  priceText: {
+    fontSize: "20px",
+    marginLeft: "10px",
+    color: "black",
+  },
+  heartButtons: {
+    display: "flex",
+    marginLeft: "auto",
+    gap: tokens.spacingHorizontalXS,
+    padding: "20px",
+  },
+  orderButton: {
+    backgroundColor: "black",
+    color: "white",
+    width: "100%",
+    height: "45px",
+    fontSize: "22px",
+    ":hover": {
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+      color: "white",
+      backgroundColor: "black",
+    },
+  },
+  menuNav: {
+    display: "flex",
+    justifyContent: "center",
+    gap: "10px",
+    marginTop: tokens.spacingVerticalM,
+    flexWrap: "wrap",
+  },
+  menuButton: {
+    backgroundColor: "white",
+    borderRadius: "8px",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    fontSize: "13px",
+    width: "40px",
+    height: "40px",
+    padding: "0",
+    cursor: "pointer",
+    ":hover": {
+      backgroundColor: "#48ACAB",
+      color: "white",
+      boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+    },
+  },
+  active: {
+    backgroundColor: "#48ACAB",
+    color: "white",
+    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
+  },
+});
 
 interface NigiriProps {
-    id: string;
-    name: string;
-    price: number;
-    image: string;
-    description: string;
-    ingredients: string;
-    allergens: string;
+  productId: string;
+  name: string;
+  price: number;
+  image: string;
+  description: string;
+  ingredients: string;
+  allergens: string;
 }
 
-function NigiriBase({ id, name, price, image, description, ingredients, allergens }: NigiriProps) {
-    const [quantity, setQuantity] = useState(() =>
-        parseInt(localStorage.getItem(`${id}Quantity`) || "0", 10)
-    );
-    const { total, updateTotal } = useOrder();
-    const { favorites, addFavorite, removeFavorite } = useFavorites();
-    const [liked, setLiked] = useState(favorites.includes(name));
-    const [disliked, setDisliked] = useState(() => JSON.parse(localStorage.getItem(`${id}Disliked`) || "false"));
-    const navigate = useNavigate();
-    const [prevQuantity, setPrevQuantity] = useState(quantity);
-    const location = useLocation();
+const NigiriBase: React.FC<NigiriProps> = ({
+  productId,
+  name,
+  price,
+  image,
+  description,
+  ingredients,
+  allergens,
+}) => {
+  const styles = useStyles();
+  const navigate = useNavigate();
+  const { total, updateTotal } = useOrder();
+  const { favorites, addFavorite, removeFavorite } = useFavorites();
 
+  const [quantity, setQuantity] = useState(() =>
+    parseInt(localStorage.getItem(`${productId}Quantity`) || "0", 10)
+  );
+  const [prevQuantity, setPrevQuantity] = useState(quantity);
+  const [liked, setLiked] = useState(favorites.includes(name));
+  const [disliked, setDisliked] = useState(
+    () => JSON.parse(localStorage.getItem(`${productId}Disliked`) || "false")
+  );
+  const [averageRating, setAverageRating] = useState<number | null>(null);
 
-    useEffect(() => {
-        localStorage.setItem(`${id}Quantity`, quantity.toString());
-        if (quantity > 0) {
-            localStorage.setItem(`${id}Name`, name);
-            localStorage.setItem(`${id}Price`, price.toString());
-        } else {
-            localStorage.removeItem(`${id}Name`);
-            localStorage.removeItem(`${id}Price`);
+  // Cargar promedio desde el back
+  useEffect(() => {
+    let cancelled = false;
+    fetchAverageRating(productId)
+      .then(avg => {
+        if (!cancelled) {
+          setAverageRating(avg > 0 ? parseFloat(avg.toFixed(1)) : null);
         }
-
-        if (quantity !== prevQuantity) {
-            const quantityDifference = quantity - prevQuantity;
-            updateTotal(total + price * quantityDifference);
-            setPrevQuantity(quantity);
-        }
-
-        localStorage.setItem(`${id}Disliked`, JSON.stringify(disliked));
-    }, [quantity, prevQuantity, price, updateTotal, total, id, name, disliked]);
-
-    const handleQuantityChange = (delta: number) => {
-        setQuantity((prev) => {
-            const newQuantity = prev + delta;
-            return newQuantity >= 0 ? newQuantity : 0;
-        });
+      })
+      .catch(err => {
+        console.error("Error al cargar promedio:", err);
+        if (!cancelled) setAverageRating(null);
+      });
+    return () => {
+      cancelled = true;
     };
+  }, [productId]);
 
-    const toggleLike = () => {
-        if (liked) {
-            setLiked(false);
-            removeFavorite(name);
-        } else {
-            setLiked(true);
-            addFavorite(name);
-        }
-        setDisliked(false);
-    };
+  // Persistir cantidad y dislike
+  useEffect(() => {
+    localStorage.setItem(`${productId}Quantity`, quantity.toString());
+    localStorage.setItem(`${productId}Disliked`, JSON.stringify(disliked));
+    if (quantity > 0) {
+      localStorage.setItem(`${productId}Name`, name);
+      localStorage.setItem(`${productId}Price`, price.toString());
+    } else {
+      localStorage.removeItem(`${productId}Name`);
+      localStorage.removeItem(`${productId}Price`);
+    }
+    if (quantity !== prevQuantity) {
+      updateTotal(total + price * (quantity - prevQuantity));
+      setPrevQuantity(quantity);
+    }
+  }, [quantity, prevQuantity, price, total, updateTotal, productId, name, disliked]);
 
-    const toggleDislike = () => {
-        if (disliked) {
-            setDisliked(false);
-        } else {
-            setDisliked(true);
-        }
-        setLiked(false);
-    };
+  const handleQuantityChange = (delta: number) => {
+    setQuantity(q => Math.max(q + delta, 0));
+  };
 
-
-    const handlers = useSwipeable({
-        onSwipedUp: () => handleSwipeUp(),
-        trackMouse: true,
+  const toggleLike = () => {
+    setLiked(lk => {
+      const now = !lk;
+      now ? addFavorite(name) : removeFavorite(name);
+      if (now) setDisliked(false);
+      return now;
     });
+  };
 
-    const handleSwipeUp = () => {
-        const nextDish = getNextDish();
-        if (nextDish) {
-            navigate(`/Nigiri${nextDish}`);
-        }
-    };
+  const toggleDislike = () => {
+    setDisliked((d: any) => {
+      const now = !d;
+      if (now) setLiked(false);
+      return now;
+    });
+  };
 
-    const getNextDish = (): string | null => {
-        const allDishes = [1, 2, 3, 4, 5];
-        for (let i = 0; i < allDishes.length; i++) {
-            const dishId = `Nigiri${allDishes[i]}`;
-            const isDisliked = JSON.parse(localStorage.getItem(`${dishId}Disliked`) || "false");
-            if (!isDisliked) {
-                return dishId;
-            }
-        }
+  const getNextDish = (): string | null => {
+    for (const n of [1, 2, 3, 4, 5]) {
+      if (!JSON.parse(localStorage.getItem(`Nigiri${n}Disliked`) || "false")) {
+        return `Nigiri${n}`;
+      }
+    }
+    return null;
+  };
 
-        return null;
-    };
+  const handlers = useSwipeable({
+    onSwipedUp: () => {
+      const next = getNextDish();
+      if (next) navigate(`/${next}`);
+    },
+    onSwipedRight: () => navigate("/Main-Menu"),
+    trackMouse: true,
+  });
 
-    return (
-        <div {...handlers} className="container">
-            <BackButton/>
-            <section className="content">
-                <div className="dish-info">
-                    <h1>NIGIRIS</h1>
-                    <img src={image} alt={name} className="dish-img" />
-                    <h2>{name}</h2>
-                    <p>{description}</p>
-                    <p><strong>Ingredients: &nbsp;</strong>{ingredients}</p>
-                    <p><strong>Allergens:&nbsp;</strong>{allergens}</p>
-                    <div className="menu" data-testid="scroll-container">
-                    {[1, 2, 3, 4, 5].map((item) => (
-                        <Link to={`/Nigiri${item}`} key={item}>
-                            <button
-                                className={`menu-button ${location.pathname === `/Nigiri${item}` ? 'active' : ''}`}
-                            >
-                                {item}
-                            </button>
-                        </Link>
-                    ))}
-                </div>
-                </div>
+  return (
+    <div {...handlers} className={styles.container}>
+      <BackButton to="/Main-Menu" />
 
+      <div className={styles.imageWrapper}>
+        <img src={image} alt={name} className={styles.image} />
+        <Button
+          appearance="subtle"
+          className={styles.rating}
+          onClick={() =>
+            navigate("/Product-Resenas", {
+              state: { productId },      // <-- aquí paso la id
+            })
+          }
+        >
+          {averageRating !== null
+            ? `${averageRating} / 5 ⭐`
+            : "Sin reseñas"}
+        </Button>
+      </div>
 
-                <div className="controls">
-                    <div className="first-control">
-                        <div className="quantity-control">
-                            <button onClick={() => handleQuantityChange(-1)}>-</button>
-                            <span>{quantity}</span>
-                            <button onClick={() => handleQuantityChange(1)}>+</button>
-                        </div>
-                        <div className="price">
-                            <p>&nbsp;&nbsp;{`+ ${price} $`}</p>
-                        </div>
-                        <div className="heart">
-                            <button className="favorite-button" onClick={toggleLike}>
-                                {liked ? "❤️" : "🤍"}
-                            </button>
-                            <button className="favorite-button" onClick={toggleDislike}>
-                                {disliked ? "❌" : "👎"}
-                            </button>
-                        </div>
-                    </div>
-                    <div className="second-control">
-                        <div className="order">
-                            <button className="order-button" onClick={() => navigate("/Local-Summary")}>
-                                Make order &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{total.toFixed(2)} $
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
+      <div className={styles.infoContainer}>
+        <Title2>NIGIRIS</Title2>
+        <Text size={500} weight="semibold">
+          {name}
+        </Text>
+        <Body1>{description}</Body1>
+        <Caption1>
+          <strong>Ingredients:</strong> {ingredients}
+        </Caption1>
+        <Caption1>
+          <strong>Allergens:</strong> {allergens}
+        </Caption1>
+      </div>
+
+      <div className={styles.menuNav}>
+        {[1, 2, 3, 4, 5].map(n => (
+          <Button
+            key={n}
+            className={mergeClasses(
+              styles.menuButton,
+              productId === `${n}` && styles.active
+            )}
+            onClick={() => navigate(`/Nigiri${n}`)}
+          >
+            {n}
+          </Button>
+        ))}
+      </div>
+
+      <div className={styles.controlsWrapper}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            width: "100%",
+            justifyContent: "center",
+            gap: 12,
+          }}
+        >
+          <div className={styles.quantityControl}>
+            <Button size="small" onClick={() => handleQuantityChange(-1)}>
+              -
+            </Button>
+            <Body1>{quantity}</Body1>
+            <Button size="small" onClick={() => handleQuantityChange(1)}>
+              +
+            </Button>
+          </div>
+          <Body1Strong className={styles.priceText}>
+            + {price.toFixed(2)} $
+          </Body1Strong>
+          <div className={styles.heartButtons}>
+            <Button icon={liked ? <HeartFilled /> : <HeartRegular />} onClick={toggleLike} />
+            <Button icon={<DismissCircleRegular />} onClick={toggleDislike} />
+          </div>
         </div>
-    );
-}
+        <Button className={styles.orderButton} onClick={() => navigate("/Local-Summary")}>
+          Make Order – {total.toFixed(2)} $
+        </Button>
+      </div>
+    </div>
+  );
+};
 
 export default NigiriBase;

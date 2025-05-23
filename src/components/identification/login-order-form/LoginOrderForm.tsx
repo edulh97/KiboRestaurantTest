@@ -70,9 +70,7 @@ const LoginOrderForm: React.FC = () => {
           Don’t have an account? &nbsp; <a className="signin-link" onClick={() => navigate("/Guest-Screen")}>  Sign Up </a>
         </h2>
       </Form>
-      <div>
-        <span>Get our data!</span>
-      </div>
+
     </div>
   );
 };

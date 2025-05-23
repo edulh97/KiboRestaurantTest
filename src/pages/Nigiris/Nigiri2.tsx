@@ -2,9 +2,11 @@
 
 import { useNavigate } from 'react-router-dom';
 import { useSwipeable } from 'react-swipeable';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Header from "../../components/headers-components/header/Header";
 import NigiriBase from "../../components/nigiri-model/NigiriBase";
+import { Product } from '../../components/products/Products-model';
+import { fetchProductById } from '../../services/api';
 
 function Nigiri2() {
     const navigate = useNavigate();
@@ -26,19 +28,41 @@ function Nigiri2() {
         trackMouse: true,
     });
 
+      // Estado para guardar el producto cargado
+      const [product, setProduct] = useState<Product | null>(null);
+      const [error, setError] = useState<string | null>(null);
+    
+      // Al montar: traemos el producto con id=1
+      useEffect(() => {
+        let mounted = true;
+        fetchProductById("2")
+          .then(prod => {
+            if (mounted) setProduct(prod);
+          })
+          .catch(err => {
+            console.error(err);
+            if (mounted) setError(err.message);
+          });
+        return () => { mounted = false; };
+      }, []);
+    
+      // Mientras carga…
+      if (error) return <div>Error: {error}</div>;
+      if (!product) return <div>Cargando producto…</div>;
+
     return (
-        <div {...handlers}>
-            <Header />
-            <NigiriBase
-                id="nigiri2"
-                name="Shrimp Nigiri"
-                price={3.50}
-                image="/nigiri2shrimp.png"
-                description="1 unit per serving"
-                ingredients="Mucho arroz y poco pescado"
-                allergens="Seafood"
-            />
-        </div>
+    <div {...handlers}>
+      <Header />
+      <NigiriBase
+        productId={product.id.toString()}
+        name={product.nombreProducto}
+        price={product.precio}
+        image="/nigiri2shrimp.png"
+        description={product.descripcion}
+        ingredients="Mucho arroz y poco pescado"
+        allergens={product.alergenos}
+      />
+    </div>
     );
 }
 
