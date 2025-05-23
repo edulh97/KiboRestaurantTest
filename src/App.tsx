@@ -19,6 +19,8 @@ import Report from './pages/reports/Reports';
 import ProductResenas from './pages/resenas/Product-Resenas';
 import Products from './pages/products/Products';
 import Usuario from './pages/Users/Usuario';
+import Categoria from './components/categories/Categoria';
+import ProductosPorCategoria from './components/categories/ProductosPorCategoria';
 
 
 function App() {
@@ -47,6 +49,7 @@ function App() {
               <Route path='/Product-Resenas' element={<ProductResenas />} />
               <Route path='/Products' element={<Products />} />
               <Route path='/*' element={<Home />} />
+              {/* <Route path="/categoria/:categoriaId" element={<ProductosPorCategoria />} /> */}
             </Routes>
           </BrowserRouter>
         </OrderProvider>
