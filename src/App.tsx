@@ -4,7 +4,6 @@ import Home from './pages/home/Home';
 import LoginMenu from './pages/login-menu/LoginMenu';
 import GuestScreen from './pages/guest-screen/GuestScreen';
 import LoginScreen from './pages/login-screen/LoginScreen';
-import MainMenu from './pages/main-menu/MainMenu';
 import LocalSummary from './pages/summary/Summary';
 import Nigiri1 from './pages/Nigiris/Nigiri1';
 import Nigiri2 from './pages/Nigiris/Nigiri2';
@@ -19,13 +18,17 @@ import Report from './pages/reports/Reports';
 import ProductResenas from './pages/resenas/Product-Resenas';
 import Products from './pages/products/Products';
 import Usuario from './pages/Users/Usuario';
-import Categoria from './components/categories/Categoria';
-import ProductosPorCategoria from './components/categories/ProductosPorCategoria';
+import Maki1 from './pages/makis/Maki1';
+import Maki3 from './pages/makis/Maki3';
+import Maki2 from './pages/makis/Maki2';
+import MainMenu from './pages/main-menu/MainMenu';
+import { AuthProvider } from './services/AuthContext';
 
 
 function App() {
   return (
     <>
+    <AuthProvider>
       <FavoritesProvider>
         <OrderProvider>
           <BrowserRouter>
@@ -40,20 +43,22 @@ function App() {
               <Route path='/Nigiri3' element={<Nigiri3 />} />
               <Route path='/Nigiri4' element={<Nigiri4 />} />
               <Route path='/Nigiri5' element={<Nigiri5 />} />
+              <Route path='/Maki1' element={<Maki1 />} />
+              <Route path='/Maki2' element={<Maki2 />} />
+              <Route path='/Maki3' element={<Maki3 />} />
               <Route path='/Local-Summary' element={<LocalSummary />} />
               <Route path='/Favorites' element={<FavoritesPage />} />
               <Route path='/Usuarios' element={<User />} />
-              {/* <Route path='/User-Profile' element={<Usuario nombre={''} correo={''} direccion={''} tipo={''} />} /> */}
-              <Route path='/User-Profile' element={<Usuario/>} />
+              <Route path='/User-Profile' element={<Usuario />} />
               <Route path='/Reports' element={<Report />} />
               <Route path='/Product-Resenas' element={<ProductResenas />} />
               <Route path='/Products' element={<Products />} />
               <Route path='/*' element={<Home />} />
-              {/* <Route path="/categoria/:categoriaId" element={<ProductosPorCategoria />} /> */}
             </Routes>
           </BrowserRouter>
         </OrderProvider>
       </FavoritesProvider>
+    </AuthProvider>
     </>
   )
 }

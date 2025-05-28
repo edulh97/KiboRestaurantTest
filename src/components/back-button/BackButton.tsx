@@ -39,21 +39,25 @@ function BackButton({ to }: BackButtonProps) {
 
   const handleClick = () => {
     if (to) {
-      navigate(to, { replace: true }); // 👈 importante usar `replace: true` para evitar duplicar en historial
+      navigate(to, { replace: true });
     } else {
       navigate(-1);
     }
   };
 
   return (
-    <button
-      className={styles.backButton}
-      onClick={handleClick}
-      aria-label="Go Back"
-      data-testid="back-button-test"
-    >
-      ←
-    </button>
+    <>
+
+      <button
+        className={styles.backButton}
+        onClick={handleClick}
+        aria-label="Go Back"
+        data-testid="back-button-test"
+      >
+        ←
+      </button>
+
+    </>
   );
 }
 

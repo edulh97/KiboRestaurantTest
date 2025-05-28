@@ -1,25 +1,29 @@
-import React, { useState } from 'react';
+// src/components/identification/login-order-form/LoginOrderForm.tsx
+import React from 'react';
 import { Button, Form, Input } from 'antd';
 import './LoginOrderForm.css';
 import { useNavigate } from 'react-router-dom';
+import LogoutButton from '../logout/LogoutButton';
 
 type LayoutType = Parameters<typeof Form>[0]['layout'];
 
-const LoginOrderForm: React.FC = () => {
+interface Props {
+  onSubmit: (email: string, password: string) => void;
+  error?: string | null;
+}
+
+const LoginOrderForm: React.FC<Props> = ({ onSubmit, error = null }) => {
   const [form] = Form.useForm();
-  const [formLayout, setFormLayout] = useState<LayoutType>('vertical');
   const navigate = useNavigate();
+  const [formLayout, setFormLayout] = React.useState<LayoutType>('vertical');
 
   const onFormLayoutChange = ({ layout }: { layout: LayoutType }) => {
     setFormLayout(layout);
   };
 
-  const onFinish = (values: unknown) => {
-    console.log('Form submitted successfully:', values);
-  };
-
-  const onFinishFailed = (errorInfo: unknown) => {
-    console.log('Form submission failed:', errorInfo);
+  const handleFinish = (values: any) => {
+    // values: { email: string; password: string; }
+    onSubmit(values.email, values.password);
   };
 
   return (
@@ -29,48 +33,47 @@ const LoginOrderForm: React.FC = () => {
         form={form}
         initialValues={{ layout: formLayout }}
         onValuesChange={onFormLayoutChange}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
+        onFinish={handleFinish}
         style={{ maxWidth: formLayout === 'inline' ? 'none' : 600 }}
       >
+        {error && (
+          <Form.Item>
+            <div style={{ color: 'red', marginBottom: 16 }}>{error}</div>
+          </Form.Item>
+        )}
+
         <Form.Item
           name="email"
           className="form-item"
           rules={[
-            {
-              required: true,
-              message: 'Por favor, introduce tu correo electrónico.',
-            },
-            {
-              type: 'email',
-              message: 'Por favor, introduce un correo electrónico válido.',
-            },
+            { required: true, message: 'Por favor, introduce tu correo electrónico.' },
+            { type: 'email', message: 'Por favor, introduce un correo electrónico válido.' },
           ]}
         >
           <Input className="input-field" placeholder="Email" />
         </Form.Item>
+
         <Form.Item
           name="password"
           className="form-item"
-          rules={[
-            {
-              required: true,
-              message: 'Por favor, introduce tu contraseña.',
-            },
-          ]}
+          rules={[{ required: true, message: 'Por favor, introduce tu contraseña.' }]}
         >
           <Input.Password className="input-field" placeholder="Password" />
         </Form.Item>
+
         <Form.Item className="form-item">
-          <Button className="button-guest" type="primary" htmlType="submit">
+          <Button className="button-guest" type="primary" htmlType="submit" block>
             Continue
           </Button>
         </Form.Item>
+
         <h2>
-          Don’t have an account? &nbsp; <a className="signin-link" onClick={() => navigate("/Guest-Screen")}>  Sign Up </a>
+          Don’t have an account? &nbsp;
+          <a className="signin-link" onClick={() => navigate("/Guest-Screen")}>
+            Sign Up
+          </a>
         </h2>
       </Form>
-
     </div>
   );
 };

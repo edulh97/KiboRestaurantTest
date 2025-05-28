@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 // src/components/nigiri-model/NigiriBase.tsx
 import React, { useState, useEffect } from "react";
 import {
@@ -11,7 +12,12 @@ import {
   Body1Strong,
   mergeClasses,
 } from "@fluentui/react-components";
-import { HeartFilled, DismissCircleRegular, HeartRegular } from "@fluentui/react-icons";
+import {
+  HeartFilled,
+  HeartRegular,
+  DismissCircleRegular,
+  DismissCircleFilled,
+} from "@fluentui/react-icons";
 import { useSwipeable } from "react-swipeable";
 import { useOrder } from "../../context/OrderContext";
 import { useFavorites } from "../../context/FavoritesContext";
@@ -159,6 +165,7 @@ const useStyles = makeStyles({
   },
 });
 
+
 interface NigiriProps {
   productId: string;
   name: string;
@@ -183,38 +190,40 @@ const NigiriBase: React.FC<NigiriProps> = ({
   const { total, updateTotal } = useOrder();
   const { favorites, addFavorite, removeFavorite } = useFavorites();
 
+  const keyMap: Record<string, string> = {
+    "1": "nigiri1Disliked",
+    "2": "nigiri2Disliked",
+    "3": "nigiri3Disliked",
+    "4": "nigiri4Disliked",
+    "5": "nigiri5Disliked",
+  };
+  const dislikeKey = keyMap[productId] || `${productId}Disliked`;
+
   const [quantity, setQuantity] = useState(() =>
     parseInt(localStorage.getItem(`${productId}Quantity`) || "0", 10)
   );
   const [prevQuantity, setPrevQuantity] = useState(quantity);
   const [liked, setLiked] = useState(favorites.includes(name));
-  const [disliked, setDisliked] = useState(
-    () => JSON.parse(localStorage.getItem(`${productId}Disliked`) || "false")
+  const [disliked, setDisliked] = useState<boolean>(() =>
+    JSON.parse(localStorage.getItem(dislikeKey) || "false")
   );
   const [averageRating, setAverageRating] = useState<number | null>(null);
 
-  // Cargar promedio desde el back
   useEffect(() => {
     let cancelled = false;
     fetchAverageRating(productId)
       .then(avg => {
-        if (!cancelled) {
-          setAverageRating(avg > 0 ? parseFloat(avg.toFixed(1)) : null);
-        }
+        if (!cancelled) setAverageRating(avg > 0 ? parseFloat(avg.toFixed(1)) : null);
       })
-      .catch(err => {
-        console.error("Error al cargar promedio:", err);
+      .catch(() => {
         if (!cancelled) setAverageRating(null);
       });
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [productId]);
 
-  // Persistir cantidad y dislike
   useEffect(() => {
     localStorage.setItem(`${productId}Quantity`, quantity.toString());
-    localStorage.setItem(`${productId}Disliked`, JSON.stringify(disliked));
+    localStorage.setItem(dislikeKey, JSON.stringify(disliked));
     if (quantity > 0) {
       localStorage.setItem(`${productId}Name`, name);
       localStorage.setItem(`${productId}Price`, price.toString());
@@ -228,32 +237,37 @@ const NigiriBase: React.FC<NigiriProps> = ({
     }
   }, [quantity, prevQuantity, price, total, updateTotal, productId, name, disliked]);
 
-  const handleQuantityChange = (delta: number) => {
-    setQuantity(q => Math.max(q + delta, 0));
-  };
+  const handleQuantityChange = (delta: number) => setQuantity(q => Math.max(q + delta, 0));
 
   const toggleLike = () => {
     setLiked(lk => {
       const now = !lk;
-      now ? addFavorite(name) : removeFavorite(name);
-      if (now) setDisliked(false);
+      if (now) {
+        addFavorite(name);
+        setDisliked(false);
+        localStorage.setItem(dislikeKey, "false");
+      } else {
+        removeFavorite(name);
+      }
       return now;
     });
   };
 
   const toggleDislike = () => {
-    setDisliked((d: any) => {
+    setDisliked(d => {
       const now = !d;
-      if (now) setLiked(false);
+      if (now) {
+        setLiked(false);
+        removeFavorite(name);
+      }
       return now;
     });
   };
 
   const getNextDish = (): string | null => {
     for (const n of [1, 2, 3, 4, 5]) {
-      if (!JSON.parse(localStorage.getItem(`Nigiri${n}Disliked`) || "false")) {
-        return `Nigiri${n}`;
-      }
+      const key = `nigiri${n}Disliked`;
+      if (!JSON.parse(localStorage.getItem(key) || "false")) return `Nigiri${n}`;
     }
     return null;
   };
@@ -276,75 +290,47 @@ const NigiriBase: React.FC<NigiriProps> = ({
         <Button
           appearance="subtle"
           className={styles.rating}
-          onClick={() =>
-            navigate("/Product-Resenas", {
-              state: { productId },      // <-- aquí paso la id
-            })
-          }
+          onClick={() => navigate("/Product-Resenas", { state: { productId } })}
         >
-          {averageRating !== null
-            ? `${averageRating} / 5 ⭐`
-            : "Sin reseñas"}
+          {averageRating !== null ? `${averageRating} / 5 ⭐` : "Sin reseñas"}
         </Button>
       </div>
 
       <div className={styles.infoContainer}>
         <Title2>NIGIRIS</Title2>
-        <Text size={500} weight="semibold">
-          {name}
-        </Text>
+        <Text size={500} weight="semibold">{name}</Text>
         <Body1>{description}</Body1>
-        <Caption1>
-          <strong>Ingredients:</strong> {ingredients}
-        </Caption1>
-        <Caption1>
-          <strong>Allergens:</strong> {allergens}
-        </Caption1>
+        <Caption1><strong>Ingredients:</strong> {ingredients}</Caption1>
+        <Caption1><strong>Allergens:</strong> {allergens}</Caption1>
       </div>
 
       <div className={styles.menuNav}>
-        {[1, 2, 3, 4, 5].map(n => (
+        {[1,2,3,4,5].map(n=>(
           <Button
             key={n}
             className={mergeClasses(
               styles.menuButton,
-              productId === `${n}` && styles.active
+              productId===`${n}`&&styles.active
             )}
-            onClick={() => navigate(`/Nigiri${n}`)}
-          >
-            {n}
-          </Button>
+            onClick={()=>navigate(`/Nigiri${n}`)}
+          >{n}</Button>
         ))}
       </div>
 
       <div className={styles.controlsWrapper}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-            justifyContent: "center",
-            gap: 12,
-          }}
-        >
+        <div style={{display:"flex",alignItems:"center",width:"100%",justifyContent:"center",gap:12}}>
           <div className={styles.quantityControl}>
-            <Button size="small" onClick={() => handleQuantityChange(-1)}>
-              -
-            </Button>
+            <Button size="small" onClick={()=>handleQuantityChange(-1)}>-</Button>
             <Body1>{quantity}</Body1>
-            <Button size="small" onClick={() => handleQuantityChange(1)}>
-              +
-            </Button>
+            <Button size="small" onClick={()=>handleQuantityChange(1)}>+</Button>
           </div>
-          <Body1Strong className={styles.priceText}>
-            + {price.toFixed(2)} $
-          </Body1Strong>
+          <Body1Strong className={styles.priceText}>+ {price.toFixed(2)} $</Body1Strong>
           <div className={styles.heartButtons}>
-            <Button icon={liked ? <HeartFilled /> : <HeartRegular />} onClick={toggleLike} />
-            <Button icon={<DismissCircleRegular />} onClick={toggleDislike} />
+            <Button icon={liked?<HeartFilled/>:<HeartRegular/>} onClick={toggleLike}/>
+            <Button icon={disliked?<DismissCircleFilled/>:<DismissCircleRegular/>} onClick={toggleDislike}/>
           </div>
         </div>
-        <Button className={styles.orderButton} onClick={() => navigate("/Local-Summary")}>
+        <Button className={styles.orderButton} onClick={()=>navigate("/Local-Summary")}>
           Make Order – {total.toFixed(2)} $
         </Button>
       </div>

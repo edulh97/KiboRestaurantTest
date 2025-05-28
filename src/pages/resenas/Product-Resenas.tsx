@@ -132,7 +132,7 @@ export default function ProductResenas(): JSX.Element {
 
   return (
     <div className={classes.container}>
-      <Text className={classes.title}>Reseñas del producto #{productId}</Text>
+      <Text className={classes.title}>Reseñas del producto</Text>
 
       {reviews.length === 0 ? (
         <MessageBar>No hay reseñas para este producto.</MessageBar>

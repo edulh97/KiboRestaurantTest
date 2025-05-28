@@ -119,8 +119,8 @@ const allergenStyle = mergeStyles({
 });
 
 const emptyStateStyle = mergeStyles({
-  fontStyle: 'italic', 
-  color: palette.neutralTertiary, 
+  fontStyle: 'italic',
+  color: palette.neutralTertiary,
   padding: 12,
   backgroundColor: palette.neutralLighter,
   borderRadius: 4,
@@ -134,7 +134,7 @@ const headerButtonStyles = {
     fontWeight: FontWeights.semibold,
     fontSize: 14,
     color: palette.black,
-    
+
     transition: 'all 0.2s ease',
     selectors: {
       ':hover': {
@@ -171,8 +171,6 @@ const dangerButtonStyles = {
 
 const formStackTokens = { childrenGap: 16 };
 const buttonStackTokens = { childrenGap: 12 };
-
-// ... Resto del componente sin cambios visibles en estilos ...
 
 
 function useProductoForm(
@@ -247,6 +245,13 @@ const Products: React.FC = () => {
     setExpandedIds(ids => (ids.includes(id) ? ids.filter(x => x !== id) : [...ids, id]));
   }, []);
 
+  const formInitialData = useMemo(() => ({
+    nombreProducto: editingProducto?.nombreProducto ?? '',
+    precio: editingProducto?.precio ?? 0,
+    descripcion: editingProducto?.descripcion ?? '',
+    alergenos: editingProducto?.alergenos ?? '',
+  }), [editingProducto]);
+
   const {
     formData,
     handleChange,
@@ -254,24 +259,21 @@ const Products: React.FC = () => {
     resetForm,
     isSubmitting,
   } = useProductoForm(
-    {
-      nombreProducto: editingProducto?.nombreProducto ?? '',
-      precio: editingProducto?.precio ?? 0,
-      descripcion: editingProducto?.descripcion ?? '',
-      alergenos: editingProducto?.alergenos ?? '',
-    },
-    async data => {
-      if (selectedCatId === null) return;
 
+    formInitialData,
+    async data => {
       if (editingProducto) {
+        // Update existing product
         await updateProducto(editingProducto.id, data);
       } else {
-        const created = await createProducto(data);
-        await assignCategoria(created.id, selectedCatId);
+        // Create new product and assign to category
+        const newProd = await createProducto(data);
+        if (selectedCatId !== null) {
+          await assignCategoria(newProd.id, selectedCatId);
+        }
       }
       await fetchAll();
       handleCloseForm();
-      setExpandedIds(prev => [...new Set([...prev, selectedCatId])]);
     },
     () => handleCloseForm()
   );
@@ -360,11 +362,13 @@ const Products: React.FC = () => {
       return (
         <div key={prod.id} className={productItemStyle} role="listitem" aria-label={`Producto ${prod.nombreProducto}`}>
           <div style={{ flex: 1, marginRight: 12 }}>
-            <Label styles={{ root: { 
-              fontWeight: FontWeights.semibold, 
-              fontSize: 16,
-              color: palette.neutralPrimary,
-            } }}>
+            <Label styles={{
+              root: {
+                fontWeight: FontWeights.semibold,
+                fontSize: 16,
+                color: palette.neutralPrimary,
+              }
+            }}>
               {prod.nombreProducto}
             </Label>
             <div className={priceStyle}>
@@ -412,8 +416,8 @@ const Products: React.FC = () => {
         <DefaultButton
           text="Categorías"
           onClick={() => setView('categorias')}
-          styles={view === 'categorias' ? { 
-            root: { ...headerButtonStyles.root, ...headerButtonStyles.rootPressed } 
+          styles={view === 'categorias' ? {
+            root: { ...headerButtonStyles.root, ...headerButtonStyles.rootPressed }
           } : headerButtonStyles}
           aria-pressed={view === 'categorias'}
           aria-label="Mostrar vista de categorías"
@@ -421,8 +425,8 @@ const Products: React.FC = () => {
         <DefaultButton
           text="Productos"
           onClick={() => setView('productos')}
-          styles={view === 'productos' ? { 
-            root: { ...headerButtonStyles.root, ...headerButtonStyles.rootPressed } 
+          styles={view === 'productos' ? {
+            root: { ...headerButtonStyles.root, ...headerButtonStyles.rootPressed }
           } : headerButtonStyles}
           aria-pressed={view === 'productos'}
           aria-label="Mostrar vista de productos"
@@ -460,18 +464,18 @@ const Products: React.FC = () => {
                 >
                   {cat.nombreCategoria}
                 </h3>
-                <PrimaryButton 
-                  onClick={() => handleOpenForm(cat.id)} 
-                  text="Añadir producto" 
-                  styles={{ root: { minWidth: 140, backgroundColor: customPrimary,} }}
+                <PrimaryButton
+                  onClick={() => handleOpenForm(cat.id)}
+                  text="Añadir producto"
+                  styles={{ root: { minWidth: 140, backgroundColor: customPrimary, } }}
                 />
               </Stack>
 
               {expandedIds.includes(cat.id) && (
-                <div 
-                  id={`productos-categoria-${cat.id}`} 
-                  role="list" 
-                  aria-live="polite" 
+                <div
+                  id={`productos-categoria-${cat.id}`}
+                  role="list"
+                  aria-live="polite"
                   style={{ marginTop: 18 }}
                 >
                   {renderProductosList(cat)}
@@ -492,11 +496,13 @@ const Products: React.FC = () => {
             <div key={prod.id} className={cardStyle} role="listitem" aria-label={`Producto ${prod.nombreProducto}`}>
               <Stack horizontal horizontalAlign="space-between" verticalAlign="center" tokens={{ childrenGap: 12 }}>
                 <div style={{ flex: 1 }}>
-                  <Label styles={{ root: { 
-                    fontWeight: FontWeights.semibold, 
-                    fontSize: 16,
-                    color: palette.neutralPrimary,
-                  } }}>
+                  <Label styles={{
+                    root: {
+                      fontWeight: FontWeights.semibold,
+                      fontSize: 16,
+                      color: palette.neutralPrimary,
+                    }
+                  }}>
                     {prod.nombreProducto}
                   </Label>
                   <div className={priceStyle}>
@@ -514,9 +520,9 @@ const Products: React.FC = () => {
                   </div>
                 </div>
                 <Stack horizontal tokens={{ childrenGap: 12 }}>
-                  <PrimaryButton 
-                    onClick={() => handleOpenForm(prod.categorias?.[0]?.id ?? 0, prod)} 
-                    text="Editar" 
+                  <PrimaryButton
+                    onClick={() => handleOpenForm(prod.categorias?.[0]?.id ?? 0, prod)}
+                    text="Editar"
                     styles={{ root: { minWidth: 90, backgroundColor: customPrimary, } }}
                   />
                   <DefaultButton
@@ -535,8 +541,8 @@ const Products: React.FC = () => {
         isOpen={selectedCatId !== null}
         onDismiss={handleCloseForm}
         isBlocking={false}
-        containerClassName={mergeStyles({ 
-          padding: 24, 
+        containerClassName={mergeStyles({
+          padding: 24,
           maxWidth: 480,
           borderRadius: 8,
         })}
@@ -548,10 +554,10 @@ const Products: React.FC = () => {
         }}
         aria-labelledby="modal-titulo-producto"
       >
-        <h2 
-          id="modal-titulo-producto" 
-          style={{ 
-            color: customPrimary, 
+        <h2
+          id="modal-titulo-producto"
+          style={{
+            color: customPrimary,
             marginBottom: 18,
             fontWeight: FontWeights.semibold,
           }}
@@ -618,21 +624,21 @@ const Products: React.FC = () => {
             />
           </Stack>
 
-          <Stack 
-            horizontal 
-            horizontalAlign="end" 
-            tokens={buttonStackTokens} 
+          <Stack
+            horizontal
+            horizontalAlign="end"
+            tokens={buttonStackTokens}
             styles={{ root: { marginTop: 24 } }}
           >
-            <DefaultButton 
-              onClick={handleCloseForm} 
-              text="Cancelar" 
+            <DefaultButton
+              onClick={handleCloseForm}
+              text="Cancelar"
               styles={{ root: { minWidth: 90 } }}
             />
-            <PrimaryButton 
-              type="submit" 
-              text={isSubmitting ? 'Guardando...' : 'Guardar'} 
-              disabled={isSubmitting} 
+            <PrimaryButton
+              type="submit"
+              text={isSubmitting ? 'Guardando...' : 'Guardar'}
+              disabled={isSubmitting}
               styles={{ root: { minWidth: 90 } }}
             />
           </Stack>

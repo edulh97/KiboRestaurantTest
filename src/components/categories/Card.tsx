@@ -21,7 +21,7 @@ function Cards() {
                     <img src="/nigiris.png" data-testid="nigiris-image" alt="Nigiri de salmon" />
                 </div>
             </div>
-            <div className="Category-card-makis" data-testid="card-makis">
+            <div className="Category-card-makis" data-testid="card-makis" onClick={() => navigate("/Maki1")}>
                 <div className="Image-container">
                     <img src="/makis.png" data-testid="makis-image" alt="Makis de salmon y aguacate" />
                 </div>

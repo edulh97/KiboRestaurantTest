@@ -3,6 +3,7 @@ import { useSwipeable } from 'react-swipeable';
 import { makeStyles, tokens, shorthands } from '@fluentui/react-components';
 import Card from '../../components/categories/Card';
 import BackButton from '../../components/back-button/BackButton';
+import LogoutButton from '../../components/identification/logout/LogoutButton';
 
 const useStyles = makeStyles({
   wrapper: {
@@ -46,6 +47,7 @@ function MainMenu() {
     <div {...handlers} className={styles.wrapper}>
       <BackButton to="LoginLogin-Menu" />
       <Card />
+      <LogoutButton />
     </div>
   );
 }

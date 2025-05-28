@@ -16,6 +16,7 @@ describe('Back test', () => {
         render(
             <Router navigator={historialSimulado} location={historialSimulado.location}>
                 <BackButton />
+
             </Router>
         );
 
